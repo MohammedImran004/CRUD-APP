@@ -26,7 +26,25 @@ function App() {
       });
     });
   }
+  function deleteUser(id){
+    const user = users.find((user) => user.id === id);  // Find the specific user
 
+    fetch(`https://jsonplaceholder.typicode.com/users/${id}`, {
+      method: "DELETE",
+    })
+      .then(response => response.json())
+      .then(data => {
+        setUsers((users)=>{
+          return users.filter(user => user.id !== id);
+        });  // Update the local state with the returned data
+        AppToaster.show({
+          message: "User Deleted Successfully",
+          intent: 'success',
+          timeout: 3000
+        });
+      })
+      .catch(error => console.error('Error updating user:', error));
+  }
   function updateUser(id) {
     const user = users.find((user) => user.id === id);  // Find the specific user
 
@@ -103,7 +121,7 @@ function App() {
               <td><EditableText onChange={value => onChangeHandler(user.id, 'website', value)} value={user.website} /></td>
               <td>
                 <Button intent="primary" onClick={() => updateUser(user.id)}>Update</Button><br />
-                <Button intent="danger">Delete</Button>
+                <Button intent="danger" onClick={() => deleteUser(user.id)}>Delete</Button>
               </td>
             </tr>
           ))}
